@@ -40,7 +40,7 @@ def create_array(file_path, label_path):
 
     return values, class_label
 
-def get_grey_scale_data(file_path, label_path):
+def get_grey_scale_data(file_path, label_path,flag):
     file_names =  os.listdir(file_path)
     files_label = get_labels(label_path)
 
@@ -56,22 +56,18 @@ def get_grey_scale_data(file_path, label_path):
             if x[0] == 256:
                 matrix_values = []
                 for h in range(x[0]):
-                    row_values = []
-                    mono = -1
+                    mono = 0
+                    sum = 0
                     for w in range(x[1]):
                         rgb = pixel_array[h][w]
-                        mono = (0.2125 * rgb[0]) + (0.7154 * rgb[1]) + (0.0721 * rgb[2])
-                        break
-                        # row_values.append(mono)
-                        # values.append(pixel_array)
-                        # pic_label = files_label[file_name]
-                        # class_label.append(pic_label)
-                    matrix_values.append(mono)
+                        mono = int(rgb[0]) + int(rgb[1]) + int(rgb[2])
+                        sum = sum + mono
+                    matrix_values.append(int(sum/x[1]))
                 i = i+1
                 values.append(matrix_values)
                 pic_label = files_label[file_name]
                 class_label.append(pic_label)
-            if i == 10:
+            if i == flag:
                 break
         except:
             pass
@@ -88,6 +84,12 @@ def dump_gzip(values,class_labels,zip_file_name):
     with gzip.open(zip_file_name, 'wb') as f:
         cPickle.dump((feature, label), f)
 
+def split_training_data(filename):
+    f = gzip.open(filename, 'rb')
+    train_set, valid_set = cPickle.load(f)
+    cPickle.dump(train_set, gzip.open('training_data.pkl.gz','wb'), cPickle.HIGHEST_PROTOCOL)
+    cPickle.dump(valid_set, gzip.open('valid_data.pkl.gz','wb'), cPickle.HIGHEST_PROTOCOL)
+
 
 if __name__ == '__main__':
     testing_class_label_mapping_path = "./../files/testing_files_labels.csv"
@@ -97,17 +99,21 @@ if __name__ == '__main__':
     training_files_path = "./../files/images/Training/"
 
     testing_gzip_file_name = "testing_data.pkl.gz"
-    training_gzip_file_name = "training_data.pkl.gz"
+    training_gzip_file_name = "train_data.pkl.gz"
 
     print "Dumping for testing data"
-    values , class_labels = create_array(testing_files_path,testing_class_label_mapping_path)
+    values , class_labels = get_grey_scale_data(testing_files_path,testing_class_label_mapping_path,10)
     dump_gzip(values,class_labels,testing_gzip_file_name)
     print "Dumping done for testing data" + "\n"
 
     print "Dumping for training data"
-    values , class_labels = create_array(training_files_path,training_class_label_mapping_path)
+    values , class_labels = get_grey_scale_data(training_files_path,training_class_label_mapping_path,30)
     dump_gzip(values,class_labels,training_gzip_file_name)
     print "Dumping done for training data"
+
+    print "Creating Valid Data"
+    split_training_data(training_gzip_file_name)
+
 
 
 
