@@ -24,23 +24,24 @@ def prepare_data_for_keras(file_path, label_path):
     values = []
 
     for file_name in file_names:
-        try:
-            pixel_array = numpy.asarray(Image.open(file_path+file_name))
-            x = pixel_array.shape
-            if x[0] == 256:
-                matrix_values = []
-                for h in range(x[0]):
-                    col_values = []
-                    for w in range(x[1]):
-                        rgb = pixel_array[h][w]
-                        mono = int(rgb[0]) + int(rgb[1]) + int(rgb[2])
-                        col_values.append(int(mono))
-                    matrix_values.append(pixel_array)
-                values.append(matrix_values)
-                pic_label = files_label[file_name]
-                class_label.append(pic_label)
-        except:
-            pass
+        if ".jpg" in file_name:
+            # try:
+                pixel_array = numpy.asarray(Image.open(file_path+file_name))
+                x = pixel_array.shape
+                if x[0] == 256:
+                    matrix_values = []
+                    for h in range(x[0]):
+                        col_values = []
+                        for w in range(x[1]):
+                            rgb = pixel_array[h][w]
+                            mono = int(rgb[0]) + int(rgb[1]) + int(rgb[2])
+                            col_values.append(int(mono))
+                        matrix_values.append(col_values)
+                    values.append(matrix_values)
+                    pic_label = files_label[file_name]
+                    class_label.append(pic_label)
+            # except:
+            #     pass
 
     return values, class_label
 
@@ -114,7 +115,6 @@ def get_grey_scale_data(file_path, label_path,flag):
 
     for file_name in file_names:
         try:
-            # print file_name
             pixel_array = numpy.asarray(Image.open(file_path+file_name))
             x = pixel_array.shape
             if x[0] == 256:
