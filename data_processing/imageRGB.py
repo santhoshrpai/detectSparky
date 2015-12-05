@@ -15,6 +15,35 @@ def get_labels(path):
             files_label[row[0]] = int(row[1])
     return files_label
 
+
+def prepare_data_for_keras(file_path, label_path):
+    file_names =  os.listdir(file_path)
+    files_label = get_labels(label_path)
+
+    class_label = []
+    values = []
+
+    for file_name in file_names:
+        try:
+            pixel_array = numpy.asarray(Image.open(file_path+file_name))
+            x = pixel_array.shape
+            if x[0] == 256:
+                matrix_values = []
+                for h in range(x[0]):
+                    col_values = []
+                    for w in range(x[1]):
+                        rgb = pixel_array[h][w]
+                        mono = int(rgb[0]) + int(rgb[1]) + int(rgb[2])
+                        col_values.append(int(mono))
+                    matrix_values.append(pixel_array)
+                values.append(matrix_values)
+                pic_label = files_label[file_name]
+                class_label.append(pic_label)
+        except:
+            pass
+
+    return values, class_label
+
 def create_array(file_path, label_path):
     file_names =  os.listdir(file_path)
     files_label = get_labels(label_path)
@@ -35,6 +64,41 @@ def create_array(file_path, label_path):
                 i = i+1
                 if i==10:
                     break
+        except:
+            pass
+
+    return values, class_label
+
+
+def get_grey_scale_data(file_path, label_path,flag):
+    file_names =  os.listdir(file_path)
+    files_label = get_labels(label_path)
+
+    class_label = []
+    values = []
+    i = 0
+
+    for file_name in file_names:
+        try:
+            # print file_name
+            pixel_array = numpy.asarray(Image.open(file_path+file_name))
+            x = pixel_array.shape
+            if x[0] == 256:
+                matrix_values = []
+                for h in range(x[0]):
+                    mono = 0
+                    sum = 0
+                    for w in range(x[1]):
+                        rgb = pixel_array[h][w]
+                        mono = int(rgb[0]) + int(rgb[1]) + int(rgb[2])
+                        sum = sum + mono
+                    matrix_values.append(int(sum/x[1]))
+                i = i+1
+                values.append(matrix_values)
+                pic_label = files_label[file_name]
+                class_label.append(pic_label)
+            if i == flag:
+                break
         except:
             pass
 
@@ -99,20 +163,20 @@ if __name__ == '__main__':
     training_files_path = "./../files/images/Training/"
 
     testing_gzip_file_name = "testing_data.pkl.gz"
-    training_gzip_file_name = "train_data.pkl.gz"
+    training_gzip_file_name = "training_data.pkl.gz"
 
     print "Dumping for testing data"
-    values , class_labels = get_grey_scale_data(testing_files_path,testing_class_label_mapping_path,10)
+    values , class_labels = prepare_data_for_keras(testing_files_path,testing_class_label_mapping_path)
     dump_gzip(values,class_labels,testing_gzip_file_name)
     print "Dumping done for testing data" + "\n"
 
     print "Dumping for training data"
-    values , class_labels = get_grey_scale_data(training_files_path,training_class_label_mapping_path,30)
+    values , class_labels = prepare_data_for_keras(training_files_path,training_class_label_mapping_path)
     dump_gzip(values,class_labels,training_gzip_file_name)
     print "Dumping done for training data"
 
-    print "Creating Valid Data"
-    split_training_data(training_gzip_file_name)
+    # print "Creating Valid Data"
+    # split_training_data(training_gzip_file_name)
 
 
 
