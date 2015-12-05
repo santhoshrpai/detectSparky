@@ -3,6 +3,11 @@ from __future__ import print_function
 import numpy as np
 np.random.seed(1337)  # for reproducibility
 
+author = "santhosh"
+#Reference: Keras Library
+#http://keras.io/
+#https://github.com/fchollet/keras/tree/master/examples
+
 from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
