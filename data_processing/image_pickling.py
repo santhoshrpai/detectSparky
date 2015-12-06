@@ -72,21 +72,21 @@ if __name__ == '__main__':
     testing_class_label_mapping_path = "./../files/testing_files_labels.csv"
     training_class_label_mapping_path = "./../files/training_files_labels.csv"
 
-    testing_files_path = "./../files/sparkyimages/Testing/"
-    training_files_path = "./../files/sparkyimages/Training/"
+    testing_files_path = "./../files/images/Testing/"
+    training_files_path = "./../files/images/Training/"
 
     testing_gzip_file_name = "testing_data.pkl.gz"
     training_gzip_file_name = "training_data.pkl.gz"
 
-    # print "Dumping for testing data"
-    # values , class_labels = prepare_data_for_keras(testing_files_path,testing_class_label_mapping_path)
-    # dump_gzip(values,class_labels,testing_gzip_file_name)
-    # print "Dumping done for testing data" + "\n"
+    print "Dumping for testing data"
+    values , class_labels = prepare_data_for_keras(testing_files_path,testing_class_label_mapping_path)
+    dump_gzip(values,class_labels,testing_gzip_file_name)
+    print "Dumping done for testing data" + "\n"
 
-    print "Dumping for training data"
-    values , class_labels = prepare_data_for_keras(training_files_path,training_class_label_mapping_path)
-    dump_gzip(values,class_labels,training_gzip_file_name)
-    print "Dumping done for training data"
+    # print "Dumping for training data"
+    # values , class_labels = prepare_data_for_keras(training_files_path,training_class_label_mapping_path)
+    # dump_gzip(values,class_labels,training_gzip_file_name)
+    # print "Dumping done for training data"
 
     # print "Creating Valid Data"
     # split_training_data(training_gzip_file_name)
