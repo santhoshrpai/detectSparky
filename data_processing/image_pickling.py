@@ -40,7 +40,7 @@ def prepare_data_for_keras(file_path, label_path):
                 pic_label = files_label[file_name]
                 class_label.append(pic_label)
                 i = i+1
-                if i == 10:
+                if i == 250:
                     break
             feature = numpy.array(values)
             label = numpy.array(class_labels)
@@ -59,7 +59,7 @@ def dump_gzip(values,class_labels,zip_file_name):
     print label.shape
 
     with gzip.open(zip_file_name, 'wb') as f:
-        cPickle.dump((feature, label), f)
+        cPickle.dump((feature, label), f, cPickle.HIGHEST_PROTOCOL)
 
 def split_training_data(filename):
     f = gzip.open(filename, 'rb')
