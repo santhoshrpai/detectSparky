@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 from __future__ import print_function
 import numpy as np
+import keras
+import h5py
+
 np.random.seed(1337)  # for reproducibility
 
 author = "santhosh"
@@ -26,9 +29,9 @@ def load_data(path):
     f.close()
     return data  # (X, Y)
 
-batch_size = 128
+batch_size = 10
 nb_classes = 10
-nb_epoch = 2
+nb_epoch = 1
 
 # input image dimensions
 img_rows, img_cols = 256, 384
@@ -41,8 +44,8 @@ nb_conv = 3
 
 # the data, shuffled and split between tran and test sets
 # (X_train, y_train), (X_test, y_test) = mnist.load_data()
-training_path = "./../data_processing/training_data.pkl.gz"
-testing_path = "./../data_processing/testing_data.pkl.gz"
+training_path = "./../data_processing/training_data_10.pkl.gz"
+testing_path = "./../data_processing/testing_data_10.pkl.gz"
 
 (X_train, y_train) = load_data(training_path)
 (X_test, y_test) = load_data(testing_path)
@@ -67,6 +70,7 @@ print(X_test.shape[0], 'test samples')
 Y_train = np_utils.to_categorical(y_train, nb_classes)
 Y_test = np_utils.to_categorical(y_test, nb_classes)
 
+# Build the model
 model = Sequential()
 
 model.add(Convolution2D(nb_filters, nb_conv, nb_conv,
@@ -85,9 +89,23 @@ model.add(Dropout(0.5))
 model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer='adadelta')
+# Compile the model with loss function and optimizer
+model.compile(loss='categorical_crossentropy', optimizer='sgd')
 
+# Train the model
 model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, validation_data=(X_test, Y_test))
+
+#save the model
+saved_model = model.to_json()
+open('my_model_architecture.json', 'w').write(saved_model)
+model.save_weights('model_weights.h5')
+
+# Evaluate the model
 score = model.evaluate(X_test, Y_test, show_accuracy=True, verbose=0)
+
+# Print the summary of results
+print("Entire Scores")
+print(score)
+print("==========================================")
 print('Test score:', score[0])
 print('Test accuracy:', score[1])
