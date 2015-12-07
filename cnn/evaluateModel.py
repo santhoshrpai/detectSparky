@@ -2,9 +2,9 @@ from keras.models import model_from_json
 import gzip
 import cPickle
 
-model_architecture = open('./../cnn/my_model_architecture.json')
+model_architecture = open('my_model_architecture.json')
 model = model_from_json(model_architecture.read())
-model.load_weights('./../cnn/model_weights.h5')
+model.load_weights('model_weights.h5')
 
 def load_data(path):
     if path.endswith(".gz"):
@@ -14,11 +14,18 @@ def load_data(path):
 
     data = cPickle.load(f)
     f.close()
-    return data  # (X, Y)
+    return data
 
 
-validation_path = "./../data_processing/validation_data_10.pkl.gz"
+validation_path = "./../data_processing/validation_data_100.pkl.gz"
 X_test = load_data(validation_path)
+
+img_rows, img_cols = 256, 384
+
+X_test = X_test.reshape(X_test.shape[0], 1, img_rows, img_cols)
+X_test = X_test.astype("float32")
+X_test /= 255
+
 
 classes = model.predict_classes(X_test, batch_size=10)
 proba = model.predict_proba(X_test, batch_size= 10)
