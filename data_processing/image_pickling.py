@@ -16,14 +16,15 @@ def get_labels(path):
     return files_label
 
 
-def prepare_data_for_keras(file_path, label_path):
+def prepare_data_for_keras(file_path, label_path, number_of_files, offset):
     file_names =  os.listdir(file_path)
     files_label = get_labels(label_path)
 
     class_label = []
     values = []
     i = 0
-    for file_name in file_names:
+    for index in range(offset, len(file_names)):
+        file_name = file_names[index]
         try:
             pixel_array = numpy.asarray(Image.open(file_path+file_name))
             x = pixel_array.shape
@@ -40,42 +41,8 @@ def prepare_data_for_keras(file_path, label_path):
                 pic_label = files_label[file_name]
                 class_label.append(pic_label)
                 i = i+1
-                if i == 100:
+                if i == number_of_files:
                     break
-            feature = numpy.array(values)
-            label = numpy.array(class_labels)
-            print feature.shape
-            print label.shape
-        except:
-            pass
-
-    return values, class_label
-
-def prepare_validation_data(file_path, label_path):
-    file_names =  os.listdir(file_path)
-    files_label = get_labels(label_path)
-
-    class_label = []
-    values = []
-    i = 0
-    for i in range(300,400):
-        file_name = file_names[i]
-        try:
-            pixel_array = numpy.asarray(Image.open(file_path+file_name))
-            x = pixel_array.shape
-            if x[0] == 256:
-                matrix_values = []
-                for h in range(x[0]):
-                    col_values = []
-                    for w in range(x[1]):
-                        rgb = pixel_array[h][w]
-                        mono = sum(rgb)
-                        col_values.append(int(mono))
-                    matrix_values.append(col_values)
-                values.append(matrix_values)
-                pic_label = files_label[file_name]
-                class_label.append(pic_label)
-                i = i+1
         except:
             pass
 
@@ -96,7 +63,7 @@ def dump_validation_gzip(values, zip_file_name):
     print feature.shape
 
     with gzip.open(zip_file_name,'wb') as f:
-        cPickle.dump(feature,f,cPickle.HIGHEST_PROTOCOL)
+        cPickle.dump((feature),f,cPickle.HIGHEST_PROTOCOL)
 
 def write_validation_labels(labels, file_path):
     output_file = open(file_path,'wb')
@@ -119,25 +86,31 @@ if __name__ == '__main__':
     testing_files_path = "./../files/images/Testing/"
     training_files_path = "./../files/images/Training/"
 
-    testing_gzip_file_name = "testing_data.pkl.gz"
-    training_gzip_file_name = "training_data.pkl.gz"
-    validation_gzip_file_name = "validation_data.pkl.gz"
+    testing_gzip_file_name = "testing_data"
+    training_gzip_file_name = "training_data"
+    validation_gzip_file_name = "validation_data"
 
     validation_class_labels_file ="./../files/validation_files_labels.csv"
 
+    #########################################
+    #
+    number_of_files = 200
+    #
+    #########################################
+
     print "Dumping for testing data"
-    values , class_labels = prepare_data_for_keras(testing_files_path,testing_class_label_mapping_path)
-    dump_gzip(values,class_labels,testing_gzip_file_name)
+    values , class_labels = prepare_data_for_keras(testing_files_path,testing_class_label_mapping_path,number_of_files,0)
+    dump_gzip(values,class_labels,testing_gzip_file_name+"_"+str(number_of_files)+".pkl.gz")
     print "Dumping done for testing data" + "\n"
 
     print "Dumping for training data"
-    values , class_labels = prepare_data_for_keras(training_files_path,training_class_label_mapping_path)
-    dump_gzip(values,class_labels,training_gzip_file_name)
+    values , class_labels = prepare_data_for_keras(training_files_path,training_class_label_mapping_path,number_of_files,0)
+    dump_gzip(values,class_labels,training_gzip_file_name+"_"+str(number_of_files)+".pkl.gz")
     print "Dumping done for training data"
 
     print "Dumping for validation data"
-    values , class_labels = prepare_validation_data(testing_files_path,testing_class_label_mapping_path)
-    dump_validation_gzip(values, validation_gzip_file_name)
+    values , class_labels = prepare_data_for_keras(testing_files_path,testing_class_label_mapping_path,number_of_files,400)
+    dump_validation_gzip(values, validation_gzip_file_name+"_"+str(number_of_files)+".pkl.gz")
     write_validation_labels(class_labels,validation_class_labels_file)
 
     # print "Creating Valid Data"
