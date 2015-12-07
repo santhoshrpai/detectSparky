@@ -29,9 +29,9 @@ def load_data(path):
     f.close()
     return data  # (X, Y)
 
-batch_size = 10
-nb_classes = 10
-nb_epoch = 1
+batch_size = 50
+nb_classes = 2
+nb_epoch = 2
 
 # input image dimensions
 img_rows, img_cols = 256, 384
@@ -44,8 +44,8 @@ nb_conv = 3
 
 # the data, shuffled and split between tran and test sets
 # (X_train, y_train), (X_test, y_test) = mnist.load_data()
-training_path = "./../data_processing/training_data_10.pkl.gz"
-testing_path = "./../data_processing/testing_data_10.pkl.gz"
+training_path = "./../data_processing/training_data_200.pkl.gz"
+testing_path = "./../data_processing/testing_data_200.pkl.gz"
 
 (X_train, y_train) = load_data(training_path)
 (X_test, y_test) = load_data(testing_path)

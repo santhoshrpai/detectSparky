@@ -2,9 +2,9 @@ from keras.models import model_from_json
 import gzip
 import cPickle
 
-model_architecture = open('my_model_architecture.json')
+model_architecture = open('model_architecture_200.json')
 model = model_from_json(model_architecture.read())
-model.load_weights('model_weights.h5')
+model.load_weights('model_weights_200.h5')
 
 def load_data(path):
     if path.endswith(".gz"):
@@ -17,7 +17,7 @@ def load_data(path):
     return data
 
 
-validation_path = "./../data_processing/validation_data_100.pkl.gz"
+validation_path = "./../data_processing/validation_data_200.pkl.gz"
 X_test = load_data(validation_path)
 
 img_rows, img_cols = 256, 384
