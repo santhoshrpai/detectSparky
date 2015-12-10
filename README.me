@@ -1,0 +1,9 @@
+Data Processing:
+* create_training_data and create_training_data_with_rotation programs create training and testing image files.
+* image_pickling files creates input pickle files. (Number of files can be specified in line 97. Currently, number_of_files = 200)
+
+CNN:
+* cnn program runs the CNN using input pickle files of size 10. Testing and training file paths can be modified to train using datasets of different size.
+* evaluate_model program evaluates model created using the validation file. Currently ,models trained using 10 images are kept for demo.
+
+Run cnn.py and evaluate_model.py to see a demo of the programs. The shown accuracies will be less as the training and validation is done on only 10 images. Training on 100-200 images will take nearly 2 hours.

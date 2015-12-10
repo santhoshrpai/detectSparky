@@ -44,8 +44,8 @@ nb_conv = 3
 
 # the data, shuffled and split between tran and test sets
 # (X_train, y_train), (X_test, y_test) = mnist.load_data()
-training_path = "./../data_processing/training_data_200.pkl.gz"
-testing_path = "./../data_processing/testing_data_200.pkl.gz"
+training_path = "./../data_processing/training_data_10.pkl.gz"
+testing_path = "./../data_processing/testing_data_10.pkl.gz"
 
 (X_train, y_train) = load_data(training_path)
 (X_test, y_test) = load_data(testing_path)
@@ -97,8 +97,8 @@ model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accur
 
 #save the model
 saved_model = model.to_json()
-open('my_model_architecture.json', 'w').write(saved_model)
-model.save_weights('model_weights.h5')
+open('model_architecture_10.json', 'w').write(saved_model)
+model.save_weights('model_weights_10.h5')
 
 # Evaluate the model
 score = model.evaluate(X_test, Y_test, show_accuracy=True, verbose=0)
